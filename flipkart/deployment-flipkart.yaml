@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: flipkart-deployment
+spec:
+   replicas: 2
+   selector:
+      matchLabels:
+         app: flipkart
+   template:
+      metadata:
+         labels:
+            app: flipkart
+
+      spec:
+         containers:
+            - name: flipkart-containers
+              image: nginx
+              ports:
+              - containerPort: 80
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+      name: flipkart-service
+spec:
+   selector:
+      app: flipkart
+   ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flipkart-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "rahulsaini.shop"
+    http:
+      paths:
+      - path: /flipkart
+        pathType: Prefix
+        backend:
+          service:
+            name: test
+            port:
+              number: 80
+
+root@control-plane:~/deployment.yaml# apiVersion: v1
+kind: Service
+metadata:
+      name: flipkart-service
+spec:
+   selector:
+      app: flipkart
+   ports:
+      - protocol: TCP
+        port: 80
+        targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flipkart-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "rahulsaini.shop"
+    http:
+      paths:
+      - path: /flipkart
+        pathType: Prefix
+        backend:
+          service:
+            name: test
+            port:
+              number: 8
